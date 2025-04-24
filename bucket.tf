@@ -1,23 +1,14 @@
-resource "google_storage_bucket" "auto-expire" {
-  name          = "auto-expiring-bucket"
-  location      = "US"
-  force_destroy = true
+provider "google" {
+  project = "githubactions-457804"
+  region  = "us-central1"
+}
 
-  lifecycle_rule {
-    condition {
-      age = 3
-    }
-    action {
-      type = "Delete"
-    }
-  }
+resource "google_project_service" "storage_api" {
+  project = "githubactions-444207"
+  service = "storage.googleapis.com"
+}
 
-  lifecycle_rule {
-    condition {
-      age = 1
-    }
-    action {
-      type = "AbortIncompleteMultipartUpload"
-    }
-  }
+resource "google_storage_bucket" "bucket" {
+  name     = "my-first-tf-bucket"
+  location = "US"
 }
