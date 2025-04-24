@@ -1,22 +1,46 @@
-
-provider "google" {
-  project = "YOUR_PROJECT_ID"
-  region  = "YOUR_REGION"
+resource "google_service_account" "default" {
+  account_id   = "my-custom-sa"
+  display_name = "Custom SA for VM Instance"
 }
 
-resource "google_compute_instance" "vm_instance" {
-  name         = "my-vm"
-  machine_type = "n1-standard-1"
-  zone         = "us-central1-a"
+resource "google_compute_instance" "default" {
+  name         = "my-instance"
+  machine_type = "n2-standard-2"
+  zone         = "us-central1-a"
 
-  boot_disk {
-    initialize_params {
-      image = "ubuntu-minimal-2210-kinetic-amd64-v20230126"
-    }
-  }
+  tags = ["foo", "bar"]
 
-  network_interface {
-    network = "default"
-    access_config {}
-  }
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+      labels = {
+        my_label = "value"
+      }
+    }
+  }
+
+  // Local SSD disk
+  scratch_disk {
+    interface = "NVME"
+  }
+
+  network_interface {
+    network = "default"
+
+    access_config {
+      // Ephemeral public IP
+    }
+  }
+
+  metadata = {
+    foo = "bar"
+  }
+
+  metadata_startup_script = "echo hi > /test.txt"
+
+  service_account {
+    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
+    email  = google_service_account.default.email
+    scopes = ["cloud-platform"]
+  }
 }
