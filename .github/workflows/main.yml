@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
-defaults:
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
       run:
         shell: bash
 
@@ -50,4 +51,4 @@ defaults:
 
     # Set output using Environment Files
     - name: Set output
-      run: echo "output_name=output_value" >> $GITHUB_OUTPUT
+      >> $GITHUB_OUTPUT
