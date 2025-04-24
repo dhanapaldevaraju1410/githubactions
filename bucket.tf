@@ -1,11 +1,23 @@
+resource "google_storage_bucket" "auto-expire" {
+  name          = "auto-expiring-bucket"
+  location      = "US"
+  force_destroy = true
 
-provider "google" {
-  project = "YOUR_PROJECT_ID"
-  region  = "YOUR_REGION"
-}
+  lifecycle_rule {
+    condition {
+      age = 3
+    }
+    action {
+      type = "Delete"
+    }
+  }
 
-resource "google_storage_bucket" "my_bucket" {
-  name          = "my-bucket"
-  location      = "US"
-  force_destroy = true
+  lifecycle_rule {
+    condition {
+      age = 1
+    }
+    action {
+      type = "AbortIncompleteMultipartUpload"
+    }
+  }
 }
